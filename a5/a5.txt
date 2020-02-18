@@ -1,0 +1,4 @@
+1. find ./fun -exec stat -c '%U,%G,%s,%n' {} \;
+
+1. find ./fun -exec file -b {} \; | sort | uniq -c
+2. seq -w 40000 40010 | parallel -I [] -j 2 'find ./fun -user [] -exec file -b {} \; | sort | uniq -c > [].filetypes'
