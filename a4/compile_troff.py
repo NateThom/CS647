@@ -32,23 +32,40 @@ logger.setLevel(logging.DEBUG)
 ##### END OF LOGGING SETUP #####
 
 #Read the binary data from stdin buffer.read()
-data = sys.stdin.buffer.read()
+data = sys.stdin.read()
 
 #Store it in a ByteIO 'file'
-
+bytIO = io.BytesIO(data.encode('utf-8'))
 #Open the tar
+tin = tarfile.open(fileobj=bytIO)
 
 #Create a temporary directory
+temp_dirpath = tempfile.mkdtemp()
 
 #iterate over the TarInfo objects in the tar and print their
 #names to the journald log
+files_in_tar = tin.getnames()
+for name in files_in_tar:
+	logger.info(name)
 
 #Extract the archive into the temporary directory
-
-#Get a list of the files
+tin.extractall(temp_dirpath)
 
 #Create a list of absolute paths by joining the temp directory path and the filename
+abs_path_list = []
+for name in files_in_tar:
+	abs_path_list.append(temp_dirpath + '/'  + name)
 
 #Iterate over all the paths and test file type with 'file -b' command
+for path in abs_path_list:
+	proc = subprocess.Popen(f"file -b {path}", shell=True, stdout=subprocess.PIPE)
+	out = proc.stdout.read().decode('utf-8')
+	print(out)
 
 #Compile only the troff files and output the html to stdout
+	proc = subprocess.Popen(f"file -b {path}", shell=True, stdout=subprocess.PIPE)
+	out = proc.stdout.read().decode('utf-8')
+	if out[0:5] == "troff":
+		groff_proc = subprocess.Popen(f"groff -Thtml {path}", shell=True, stdout=subprocess.PIPE)
+		groff_out = groff_proc.stdout.read().decode('utf-8')
+		print(groff_out)

@@ -1,0 +1,6 @@
+[Unit]
+Description=Tarecho service
+
+[Service]
+ExecStart=/usr/local/bin/compile_troff.py
+StandardInput=socket

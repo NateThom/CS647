@@ -1,0 +1,9 @@
+[Unit]
+Description=Iterates over the files in a tar, finds troff files and compiles them to html and outputs them to stdout.
+
+[Socket]
+ListenStream=/var/run/tarecho
+Accept=yes
+
+[Install]
+WantedBy=sockets.target
